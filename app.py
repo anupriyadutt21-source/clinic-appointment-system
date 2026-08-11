@@ -1,3 +1,4 @@
+
 import streamlit as st
 import sqlite3
 import pandas as pd
@@ -13,7 +14,8 @@ st.set_page_config(
     page_icon="🏥",
     layout="wide"
 )
-# Hide Streamlit branding and menu
+
+# Hide Streamlit menu, header and footer
 st.markdown("""
 <style>
 #MainMenu {
@@ -109,6 +111,7 @@ menu = st.sidebar.selectbox(
 )
 
 st.sidebar.markdown("---")
+
 st.sidebar.info(
     "Clinic Appointment Management System\n\n"
     "Developed using Python, Streamlit and SQLite."
@@ -121,24 +124,23 @@ st.sidebar.info(
 if menu == "Dashboard":
 
     st.title("🏥 Clinic Dashboard")
-    st.write("Welcome to the Clinic Appointment Management System.")
 
-    # Count patients
+    st.write(
+        "Welcome to the Clinic Appointment Management System."
+    )
+
     patient_count = cursor.execute(
         "SELECT COUNT(*) FROM patients"
     ).fetchone()[0]
 
-    # Count doctors
     doctor_count = cursor.execute(
         "SELECT COUNT(*) FROM doctors"
     ).fetchone()[0]
 
-    # Count appointments
     appointment_count = cursor.execute(
         "SELECT COUNT(*) FROM appointments"
     ).fetchone()[0]
 
-    # Count confirmed appointments
     confirmed_count = cursor.execute(
         "SELECT COUNT(*) FROM appointments WHERE status='Confirmed'"
     ).fetchone()[0]
@@ -192,7 +194,6 @@ if menu == "Dashboard":
 
     if recent.empty:
         st.info("No appointments available.")
-
     else:
         st.dataframe(
             recent,
@@ -462,10 +463,6 @@ elif menu == "Appointments":
         conn
     )
 
-    # -----------------------------------------------------
-    # BOOK APPOINTMENT
-    # -----------------------------------------------------
-
     st.subheader("📅 Book New Appointment")
 
     if patients.empty:
@@ -546,10 +543,6 @@ elif menu == "Appointments":
                 "✅ Appointment booked successfully!"
             )
 
-    # -----------------------------------------------------
-    # APPOINTMENT HISTORY
-    # -----------------------------------------------------
-
     st.markdown("---")
 
     st.subheader("📋 Appointment History")
@@ -584,10 +577,6 @@ elif menu == "Appointments":
             appointments,
             use_container_width=True
         )
-
-        # -------------------------------------------------
-        # CANCEL APPOINTMENT
-        # -------------------------------------------------
 
         st.subheader("❌ Cancel Appointment")
 
@@ -757,10 +746,6 @@ elif menu == "Reports":
         ON appointments.doctor_id = doctors.doctor_id
     """, conn)
 
-    # -----------------------------------------------------
-    # APPOINTMENTS BY STATUS
-    # -----------------------------------------------------
-
     if appointments.empty:
 
         st.info(
@@ -785,23 +770,11 @@ elif menu == "Reports":
             ax=ax1
         )
 
-        ax1.set_xlabel(
-            "Status"
-        )
-
-        ax1.set_ylabel(
-            "Number of Appointments"
-        )
-
-        ax1.set_title(
-            "Appointment Status"
-        )
+        ax1.set_xlabel("Status")
+        ax1.set_ylabel("Number of Appointments")
+        ax1.set_title("Appointment Status")
 
         st.pyplot(fig1)
-
-        # -------------------------------------------------
-        # APPOINTMENTS BY DOCTOR
-        # -------------------------------------------------
 
         st.subheader(
             "👨‍⚕️ Appointments by Doctor"
@@ -819,17 +792,9 @@ elif menu == "Reports":
             ax=ax2
         )
 
-        ax2.set_xlabel(
-            "Doctor"
-        )
-
-        ax2.set_ylabel(
-            "Appointments"
-        )
-
-        ax2.set_title(
-            "Doctor-wise Appointments"
-        )
+        ax2.set_xlabel("Doctor")
+        ax2.set_ylabel("Appointments")
+        ax2.set_title("Doctor-wise Appointments")
 
         plt.xticks(
             rotation=45,
@@ -837,10 +802,6 @@ elif menu == "Reports":
         )
 
         st.pyplot(fig2)
-
-        # -------------------------------------------------
-        # APPOINTMENTS BY SPECIALIZATION
-        # -------------------------------------------------
 
         st.subheader(
             "🩺 Appointments by Specialization"
@@ -868,7 +829,7 @@ elif menu == "Reports":
         st.pyplot(fig3)
 
 # =========================================================
-# CLOSE DATABASE
+# SAVE DATABASE
 # =========================================================
 
 conn.commit()
